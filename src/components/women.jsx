@@ -1,30 +1,30 @@
 import Link from 'next/link';
-import { db } from '@/config/firebase';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import db from '@/firebase/config';
 import { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
+import { getProducts } from '@/firebase/firestore/getData';
+import { dummyTrending } from '@/dummData';
 
-const productCollectionRef = collection(db, 'products');
 
 export default function Women() {
   const [productList, setProductList] = useState([]);
 
+  
   useEffect(() => {
     const getProductList = async () => {
+      setProductList(dummyTrending)
       try {
-        const data = await getDocs(productCollectionRef);
-        const filteredData = data.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-          views: doc.data().views || 0, // Initialize view count to 0
-        }));
-        setProductList(filteredData);
+        const data = await getProducts();
+        const filteredProducts = data.filter((product) => product.sex === 'f');
+        setProductList(filteredProducts);
       } catch (error) {
         console.error(error);
       }
     };
     getProductList();
   }, []);
+  console.log(productList);
 
   useEffect(() => {
     // Update view count when a product is viewed
@@ -37,24 +37,17 @@ export default function Women() {
     
 
   // Add event listeners to track product views
-  productList.forEach((product) => {
-    const handleProductView = () => updateViewCount(product.id);
-    const productLink = document.getElementById(`product-link-${product.id}`);
-    if (productLink) {
-      productLink.addEventListener('click', handleProductView);
-      return () => {
-        productLink.removeEventListener('click', handleProductView);
-      };
-    }
-  });
-  }, [productList]);
-
-  // Filter and sort products by view count and sex value
-  const filteredProducts = productList.filter(product => product.sex === 'f');
-  const sortedProducts = filteredProducts.sort((a, b) => a.views - b.views);
-
-  // Display the top four products
-  const topFourProducts = sortedProducts.slice(0, 4);
+    productList.forEach((product) => {
+      const handleProductView = () => updateViewCount(product.id);
+      const productLink = document.getElementById(`product-link-${product.id}`);
+      if (productLink) {
+        productLink.addEventListener('click', handleProductView);
+        return () => {
+          productLink.removeEventListener('click', handleProductView);
+        };
+      }
+    });
+  }, []);
 
   return (
     <>
@@ -65,42 +58,10 @@ export default function Women() {
         <div className="px-3 pt-1">
             <p className='text-xs md:text-sm text-slate-500'>Footwear</p>
         </div>
-        <div className="grid grid-cols-5 sm:grid-cols-5 lg:grid-cols-5 gap-2 px-2  md:py-4 bg-gray-200 mx-2 mt-2 rounded-sm shadow-sm">
-            <div className='flex flex-col items-center md:gap-2 hover:shadow-sm rounded-lg py-2 hover:scale-105 transition duration-300 ease-in-out'> 
-                <img src="https://images.unsplash.com/photo-1583922606661-0822ed0bd916?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=777&q=80" className=' w-[100px] md:w-[190px] h-auto' alt="" />
-                <div>
-                    <span className='text-sm'>Heels</span>
-                </div>
-            </div>
-            <div className='flex flex-col items-center md:gap-2 hover:shadow-sm rounded-lg py-2 hover:scale-105 transition duration-300 ease-in-out'> 
-                <img src="https://images.unsplash.com/photo-1583922606661-0822ed0bd916?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=777&q=80" className=' w-[100px] md:w-[190px] h-auto' alt="" />
-                <div>
-                    <span className='text-sm'>Crocs</span>
-                </div>
-            </div>
-            <div className='flex flex-col items-center md:gap-2 hover:shadow-sm rounded-lg py-2 hover:scale-105 transition duration-300 ease-in-out'>
-                <img src="https://images.unsplash.com/photo-1583922606661-0822ed0bd916?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=777&q=80" className=' w-[100px] md:w-[190px] h-auto' alt="" />
-                <div>
-                    <span className='text-sm'>Sandals</span>
-                </div>
-            </div>
-            <div className='flex flex-col items-center md:gap-2 hover:shadow-sm rounded-lg py-2 hover:scale-105 transition duration-300 ease-in-out'>
-                <img src="https://images.unsplash.com/photo-1583922606661-0822ed0bd916?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=777&q=80" className=' w-[100px] md:w-[190px] h-auto' alt="" />
-                <div>
-                    <div className='text-sm text-center'>Slipper heels</div>
-                </div>
-            </div>
-            <div className='flex flex-col items-center md:gap-2 hover:shadow-sm rounded-lg hover:scale-105 transition duration-300 ease-in-out py-2'> 
-                <img src="https://images.unsplash.com/photo-1583922606661-0822ed0bd916?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=777&q=80" className='w-[100px] md:w-[190px] h-auto' alt="" />
-                <div>
-                    <span className='text-sm'>Flats</span>
-                </div>
-            </div>
-        </div>
         {/* Product Cart */}
         <section className="m-6 rounded-sm">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {topFourProducts.map((product) => (
+            {productList.map((product) => (
                 <Link href={`/products/${product.id}`} key={product.name} id={`product-link-${product.id}`} 
                 className="mb-8 flex flex-col items-center">
                     <div className='mb-2'>
@@ -113,7 +74,6 @@ export default function Women() {
                     />
                     </div>
                     <div className="text-sm mb-2">{product.views} views</div>
-                    {/* <div className="text-sm mb-2">{product.sex}</div> */}
                     <div className="text-center text-sm">{product.name}</div>
                     <div className="flex items-center gap-4">
                     <p className='font-medium'>GHC {product.normalPrice}</p>

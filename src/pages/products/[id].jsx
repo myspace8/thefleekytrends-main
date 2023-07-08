@@ -1,14 +1,13 @@
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from "@/config/firebase";
+import db from "../../firebase/config"
 import { useEffect, useState } from 'react';
 import { Disclosure } from '@headlessui/react'
 import { ChevronUpIcon } from '@heroicons/react/20/solid'
+import { getProducts } from "@/firebase/firestore/getData";
 
 const inter = Inter({ subsets: ["latin"] });
-
-const productCollectionRef = collection(db, 'products');
 
 export default function ProductDetails() {
   const [productList, setProductList] = useState([]);
@@ -16,13 +15,9 @@ export default function ProductDetails() {
   useEffect(() => {
     const getProductList = async () => {
       try {
-        const data = await getDocs(productCollectionRef);
-        const filteredData = data.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-          views: doc.data().views || 0, // Initialize view count to 0
-        }));
-        setProductList(filteredData);
+        const data = await getProducts();
+        
+        setProductList(data);
       } catch (error) {
         console.error(error);
       }

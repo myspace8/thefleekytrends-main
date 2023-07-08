@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { db } from '@/config/firebase';
+import db from '@/firebase/config';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
+import { getProducts } from '@/firebase/firestore/getData';
+import { dummyTrending } from '@/dummData';
 
-const productCollectionRef = collection(db, 'products');
 
 export default function MenTrendingProducts() {
   const [productList, setProductList] = useState([]);
@@ -12,14 +13,13 @@ export default function MenTrendingProducts() {
 
   useEffect(() => {
     const getProductList = async () => {
+      setProductList(dummyTrending)
       try {
-        const data = await getDocs(productCollectionRef);
-        const filteredData = data.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-          views: doc.data().views || 0, // Initialize view count to 0
-        }));
-        setProductList(filteredData);
+        const data = await getProducts();
+        const filteredProducts = data.filter((product) => product.sex === 'm');
+        const sortedProducts = filteredProducts.sort((a, b) => b.views - a.views);
+        const slicedProducts = sortedProducts.slice(0, 4);
+        setProductList(slicedProducts);
       } catch (error) {
         console.error(error);
       }
@@ -50,22 +50,14 @@ export default function MenTrendingProducts() {
   });
   }, [productList]);
 
-  // Filter and sort products by view count and sex value
-  const filteredProducts = productList.filter(product => product.sex === 'm');
-  const sortedProducts = filteredProducts.sort((a, b) => b.views - a.views);
-
-  // Display the top four products
-  const topFourProducts = sortedProducts.slice(0, 4);
-
   return (
     <div className="flex flex-col justify-between">
       <section className="px-3 py-2 bg-gray-300 rounded-t-sm">
-        <p className='uppercase text-sm md:text-base'>Trending products: men</p>
       </section>
       {/* Product Cart */}
       <section className="m-6 rounded-sm">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {topFourProducts.map((product) => (
+          {productList.map((product) => (
             <Link href={`/products/${product.id}`} key={product.name} id={`product-link-${product.id}`} 
             className="mb-8 flex flex-col items-center">
                 <div className='mb-2'>
@@ -78,7 +70,6 @@ export default function MenTrendingProducts() {
                   />
                 </div>
                 <div className="text-sm mb-2">{product.views} views</div>
-                {/* <div className="text-sm mb-2">{product.sex}</div> */}
                 <div className="text-center text-sm">{product.name}</div>
                 <div className="flex items-center gap-4">
                   <p className='font-medium'>GHC {product.normalPrice}</p>

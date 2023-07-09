@@ -1,11 +1,11 @@
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
-import { collection, getDocs } from 'firebase/firestore';
-import db from "../../firebase/config"
 import { useEffect, useState } from 'react';
 import { Disclosure } from '@headlessui/react'
 import { ChevronUpIcon } from '@heroicons/react/20/solid'
-import { getProducts } from "@/firebase/firestore/getData";
+import { getProduct } from "@/firebase/firestore/getData";
+import { dummyTrending } from "@/dummData";
+import ColorPicker from "./palletes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,9 +14,9 @@ export default function ProductDetails() {
 
   useEffect(() => {
     const getProductList = async () => {
+      setProductList(dummyTrending)
       try {
-        const data = await getProducts();
-        
+        const data = await getProduct(id);
         setProductList(data);
       } catch (error) {
         console.error(error);
@@ -28,34 +28,51 @@ export default function ProductDetails() {
   // -----------------------------------------
   const router = useRouter();
   const { id } = router.query; 
-  const product = productList.find((p) => p.id === id);
 
   return (
     <>
       <div className={`md:w-[900px] md:m-[auto] ${inter.className}`}>
         <div className="flex flex-col md:gap-11 md:flex-row py-4 px-4 md:py-6 bg-white my-6 rounded-sm shadow-md lg:py-8">
-          {product && 
+          {productList && 
             <div className="flex gap-4">
               <div className="md:w-[98%] relative mb-4 md:mb-0">
                 <img
                   width={500}
                   height={500}
-                  src={product.image}
-                  alt={product.name}
+                  src={productList.image}
+                  alt={productList.name}
                   className="w-full h-full object-contain"
                 />
-                <p className="absolute top-0 text-sm text-red-400">Product Id: {product.id}</p>
+                <p className="absolute top-0 text-sm text-red-400">Product Id: {productList.id}</p>
               </div>
             </div>
           } 
-          {product && 
+          {productList && 
             <div className="md:w-2/3">
               <div>
-                <div className="text-sm mb-2">{product.views} views</div>
-                <h2 className="text-sm lg:text-base">{product.name}</h2>
+                <div className="text-sm mb-2">{productList.views} views</div>
+                <h2 className="text-sm lg:text-base">{productList.name}</h2>
                 <div className="flex gap-4">
-                  <p className='font-medium'>GHC {product.normalPrice}</p>
-                  <p className="line-through font-medium text-slate-400">GHC {product.discPrice}</p>
+                  <p className='font-medium'>GHC {productList.normalPrice}</p>
+                  <p className="line-through font-medium text-slate-400">GHC {productList.discPrice}</p>
+                </div>
+              </div>
+              <div>
+              <div className="flex items-center">
+                <label className="block font-medium" htmlFor="selectField">
+                  Size
+                </label>
+                <select
+                  id="selectField"
+                  className="p-2 bg-white focus:outline-none "
+                >
+                  <option value="option1">40</option>
+                  <option value="option2">36</option>
+                  <option value="option3">38</option>
+                </select>
+              </div>
+                <div className="mt-3 mb-3">
+                  <ColorPicker />
                 </div>
               </div>
               <div className="mt-6">

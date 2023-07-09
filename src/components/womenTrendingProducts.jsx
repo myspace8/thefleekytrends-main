@@ -27,7 +27,6 @@ export default function WomenTrendingProducts() {
     };
     getProductList();
   }, []);
-  console.log(productList);
 
   useEffect(() => {
     // Update view count when a product is viewed
@@ -61,7 +60,7 @@ export default function WomenTrendingProducts() {
         <section className="m-6 rounded-sm">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {productList.map((product) => (
-                <Link href={`/products/${product.id}`} key={product.name} id={`product-link-${product.id}`} 
+                <Link href={`/products/${product.id}`} key={product.id} id={`product-link-${product.id}`} 
                 className="mb-8 flex flex-col items-center">
                     <div className='mb-2'>
                     <img

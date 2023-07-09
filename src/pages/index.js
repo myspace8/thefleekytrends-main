@@ -1,7 +1,5 @@
 import SexLink from "@/components/sexLink";
 import TrendingProducts from "@/components/trendingProducts";
-import WomenTrendingProducts from "@/components/womenTrendingProducts";
-import MenTrendingProducts from "@/components/menTrendingProducts";
 
 export default function Home() {
   return (
@@ -15,9 +13,6 @@ export default function Home() {
       <div className="mt-2 lg:m-8 bg-white rounded-sm">
         <TrendingProducts />
       </div>
-      {/* <div className="mt-2 lg:m-8 bg-white rounded-sm">
-        <MenTrendingProducts />
-      </div> */}
     </>
   );
 }

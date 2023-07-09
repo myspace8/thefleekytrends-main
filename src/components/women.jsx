@@ -24,7 +24,6 @@ export default function Women() {
     };
     getProductList();
   }, []);
-  console.log(productList);
 
   useEffect(() => {
     // Update view count when a product is viewed

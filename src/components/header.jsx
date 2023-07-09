@@ -39,10 +39,55 @@ import {
 } from "@/components/ui/tabs"
 import { useStateContext} from '@/context/StateContext';
 import Cart from "./Cart";
+import { getAllProducts } from "@/firebase/firestore/getData";
+import { filterItemsBySubtext } from "@/utils/productfunctions";
 
 
 export default function Header() {
   const { showCart, setShowCart, totalQuantities } = useStateContext();
+  const [allProducts, setAllProducts] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [resultLength, setResultLength] = useState(0);
+
+  const handleToggleSearch = () => {
+    console.log('search');
+    setShowSearch((prevState) => !prevState);
+  };
+  useEffect(() => {
+    const handleBodyOverflow = () => {
+      if (showSearch) {
+        document.body.classList.add("overflow-hidden");
+      } else {
+        document.body.classList.remove("overflow-hidden");
+      }
+    };
+    handleBodyOverflow();
+  }, [showSearch]);
+
+  /*The logic for the search lies in the two useEffects below
+  In the first useEffect, we fetch all the products from the API and set the state
+  In the second useEffect, we filter the products based on the search term and set the state
+  */
+  useEffect(() => {
+    const getProducts = async () => {
+      const data = await getAllProducts();
+      setAllProducts(data);
+    };
+    getProducts();
+  }, []);
+
+  useEffect(() => {
+    const handleSearch = () => {
+      let results;
+      results = filterItemsBySubtext(allProducts, searchTerm);
+      setResultLength(results.length);
+      setSearchResults(results.slice(0, 4));
+    };
+    handleSearch();
+  }, [searchTerm]);
 
   return (
     <>
@@ -160,9 +205,11 @@ export default function Header() {
               {/* Search & Bag */}
             <div className="flex items-center gap-4">
               <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                </svg>
+                <button onClick={handleToggleSearch}>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                  </svg>
+                </button>
               </div>
               <div>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -317,9 +364,11 @@ export default function Header() {
             {/* SEARCH SEARCH SEARCH */}
             <div className="flex items-center gap-4">
               <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                </svg>
+                <button onClick={handleToggleSearch}>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                  </svg>
+                </button>
               </div>
               <div>
                 <button type="button" onClick={() => setShowCart(!showCart)}>
@@ -333,6 +382,81 @@ export default function Header() {
         </div>
         {showCart && <Cart />}
       </header>
+       {/* SEARCH SEARCH SEARCH SEARCH */}
+       {showSearch ? (
+          <div
+            className="whats_overlay fixed w-screen bg-black z-10 bg-opacity-40 overflow-auto"
+            onClick={(e) => {
+              if (
+                e.target.classList.contains("whats_overlay") || // using the `classList` property instead of `className`.
+                e.target.parentElement.classList.contains("whats_overlay")
+              ) {
+                setShowSearch(false);
+              }
+            }}
+          >
+            <div className="bg-white bg-opacity-100">
+              <div className="flex items-center p-3">
+                <div className="mr-2">
+                  {/* <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" /> */}
+                </div>
+                <input
+                  type="text"
+                  className="flex-grow outline-none focus:ring-0 "
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <button
+                  className="ml-2 cursor-pointer"
+                  onClick={handleToggleSearch}
+                >
+                  {/* <XMarkIcon className="h-7 w-7 text-gray-500" />
+                   */}
+                   X
+                </button>
+              </div>
+
+              <div>
+                <div className="w-full flex justify-between px-3 pt-3">
+                  <span className="text-xs text-gray-700">
+                    {resultLength} results
+                  </span>
+                  <a href="/#" className="text-xs text-gray-700">
+                    See all
+                  </a>
+                </div>
+                <hr />
+                <div className="flex flex-col md:flex-row ">
+                  {searchResults.map(({ id, data }) => {
+                    const { name, image, originalPrice, reducedPrice } = data;
+                    return (
+                      <div
+                        className="flex flex-row md:flex-col w-full md:w-fit items-center p-3 gap-3 hover:grayscale border-transparent border-b-2 hover:border-gray-100 cursor-pointer"
+                        key={`search_${id}`}
+                      >
+                        <a href={`/products/${id}`}>
+                          <Image className="w-16 md:w-24" ar="1" src={image} />
+                          <div className="flex flex-col ">
+                            <h3 className="font-bold ">{name}</h3>
+                            <div>
+                              <span className="text-base">
+                                GH₵ {reducedPrice}
+                              </span>
+                              <span className="ml-4 text-xs line-through font-extralight text-gray-600">
+                                GH₵{originalPrice}
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
     </>
   )
 }
@@ -349,7 +473,6 @@ const ListItem = (({ className, children, ...props }, ref) => {
           )}
           {...props}
         >
-          {/* <div className="text-sm font-medium leading-none">{title}</div> */}
           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground hover:underline">
             {children}
           </p>

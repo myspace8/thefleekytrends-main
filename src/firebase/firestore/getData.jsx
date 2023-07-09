@@ -2,6 +2,25 @@ import db from '../config';
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 
 
+export const  getAllProducts = async () =>{
+  let documentsData;
+  const collectionRef = collection(db, "products"); // Specify the collection from which you want to fetch documents
+
+  /* Fetch all documents in the collection*/
+  try {
+    const querySnapshot = await getDocs(collectionRef);
+
+    documentsData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      data: doc.data(),
+    }));
+  } catch (error) {
+    console.error("Error fetching documents: ", error);
+  }
+  return documentsData;
+}
+
+
 export async function getProducts() {
   const productsRef = collection(db, 'products');
   const snapshot = await getDocs(productsRef);
@@ -27,7 +46,6 @@ export const getProduct = async (id) => {
 
     if (docSnapshot.exists()) {
       const documentData = docSnapshot.data();
-      // console.log(id);
       return {
         id, // Include the id in the returned data object
         ...documentData
@@ -41,23 +59,3 @@ export const getProduct = async (id) => {
     return null;
   }
 };
-
-// export const getProduct = async (id) => {
-//   let docRef = doc(db, "products", id);
-
-//   try {
-//     const docSnapshot = await getDoc(docRef);
-
-//     if (docSnapshot.exists()) {
-//       const documentData = docSnapshot.data();
-//       console.log(id);
-//       return documentData;
-//     } else {
-//       console.log("Document does not exist");
-//       return null;
-//     }
-//   } catch (error) {
-//     console.error("Error getting document:", error);
-//     return null;
-//   }
-// };

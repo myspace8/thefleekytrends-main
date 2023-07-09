@@ -30,13 +30,13 @@ export default function ProductDetails() {
       }
     };
     getProductList();
-  }, []);
+  }, [id]);
+  console.log(productList);
 
   return (
     <>
       <div className={`md:w-[900px] md:m-[auto] ${inter.className}`}>
         <div className="flex flex-col md:gap-11 md:flex-row py-4 px-4 md:py-6 bg-white my-6 rounded-sm shadow-md lg:py-8">
-          {productList && 
             <div className="flex gap-4">
               <div className="md:w-[98%] relative mb-4 md:mb-0">
                 <img
@@ -49,8 +49,6 @@ export default function ProductDetails() {
                 <p className="absolute top-0 text-sm text-red-400">Product ID: {productList.id}</p>
               </div>
             </div>
-          } 
-          {productList && 
             <div className="md:w-2/3">
               <div>
                 <div className="text-sm mb-2">{productList.views} views</div>
@@ -118,9 +116,9 @@ export default function ProductDetails() {
                 </div>
               </div>
             </div>
-          }
         </div>
       </div>
     </>
   );
 }
+

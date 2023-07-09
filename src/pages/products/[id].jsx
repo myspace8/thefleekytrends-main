@@ -6,11 +6,14 @@ import { ChevronUpIcon } from '@heroicons/react/20/solid'
 import { getProduct } from "@/firebase/firestore/getData";
 import { dummyTrending } from "@/dummData";
 import ColorPicker from "./palletes";
+import { useStateContext } from '@/context/StateContext';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function ProductDetails() {
   const [productList, setProductList] = useState([]);
+  const { decQty, incQty, qty, onAdd, setShowCart } = useStateContext();
 
   useEffect(() => {
     const getProductList = async () => {
@@ -76,8 +79,10 @@ export default function ProductDetails() {
                 </div>
               </div>
               <div className="mt-6">
-                <button class="px-4 w-full py-2 bg-gray-900 text-white rounded-sm shadow-2xl hover: focus:outline-none focus:bg-gray-900">
-                  Order now
+                <button
+                onClick={() => onAdd(productList, qty)} 
+                className="px-4 w-full py-2 bg-gray-900 text-white rounded-sm shadow-2xl hover: focus:outline-none focus:bg-gray-900">
+                  Add to Bag
                 </button>              
                 <p className="mt-4 mb-8 text-center text-sm text-gray-500">
                   Buying to sell?{' '}

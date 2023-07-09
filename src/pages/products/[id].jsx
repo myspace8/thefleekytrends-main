@@ -15,6 +15,10 @@ export default function ProductDetails() {
   const [productList, setProductList] = useState([]);
   const { decQty, incQty, qty, onAdd, setShowCart } = useStateContext();
 
+    // -----------------------------------------
+    const router = useRouter();
+    const { id } = router.query; 
+
   useEffect(() => {
     const getProductList = async () => {
       setProductList(dummyTrending)
@@ -27,10 +31,6 @@ export default function ProductDetails() {
     };
     getProductList();
   }, []);
-
-  // -----------------------------------------
-  const router = useRouter();
-  const { id } = router.query; 
 
   return (
     <>
@@ -46,7 +46,7 @@ export default function ProductDetails() {
                   alt={productList.name}
                   className="w-full h-full object-contain"
                 />
-                <p className="absolute top-0 text-sm text-red-400">Product Id: {productList.id}</p>
+                <p className="absolute top-0 text-sm text-red-400">Product ID: {productList.id}</p>
               </div>
             </div>
           } 

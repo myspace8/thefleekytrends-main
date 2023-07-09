@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useStateContext } from '../context/StateContext';
 
 const Cart = () => {
-  const { totalPrice, totalQuantities, cartItems, setShowCart, toggleCartItemQuanitity, onRemove } = useStateContext();
+  const { totalPrice, totalQuantities, cartItems, setShowCart, toggleCartItemQuantity, onRemove } = useStateContext();
 
   return (
     <div>
@@ -46,12 +46,12 @@ const Cart = () => {
                 <div className="flex bottom">
                 <div>
                 <p className="quantity-desc">
-                    <span className="minus" onClick={() => toggleCartItemQuanitity(item.id, 'dec') }>
+                    <span className="minus" onClick={() => toggleCartItemQuantity(item.id, 'dec') }>
                         Decrement
                     {/* <AiOutlineMinus /> */}
                     </span>
                     <span className="num" onClick="">{item.quantity}</span>
-                    <span className="plus" onClick={() => toggleCartItemQuanitity(item.id, 'inc') }>
+                    <span className="plus" onClick={() => toggleCartItemQuantity(item.id, 'inc') }>
                         Increment
                         {/* <AiOutlinePlus /> */}
                     </span>
@@ -77,7 +77,7 @@ const Cart = () => {
               <h3>GHC{totalPrice}</h3>
             </div>
             <div className="btn-container">
-              <button type="button" className="btn" onClick={'#'}>
+              <button type="button" className="text-white bg-black px-5 py-1" disabled={true}>
                 Place Order
               </button>
             </div>

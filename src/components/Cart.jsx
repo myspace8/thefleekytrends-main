@@ -1,12 +1,27 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 // import { AiOutlineMinus, AiOutlinePlus, AiOutlineLeft, AiOutlineShopping } from 'react-icons/ai';
 // import { TiDeleteOutline } from 'react-icons/ti';
 // import toast from 'react-hot-toast';
 
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 import { useStateContext } from '../context/StateContext';
+import { orderBy } from 'lodash';
 
 const Cart = () => {
+  const [showModal, setShowModal] = useState(false)
   const { totalPrice, totalQuantities, cartItems, setShowCart, toggleCartItemQuantity, onRemove } = useStateContext();
 
   return (
@@ -76,11 +91,44 @@ const Cart = () => {
               <h3>Subtotal:</h3>
               <h3>GHC{totalPrice}</h3>
             </div>
-            <div className="btn-container">
-              <button type="button" className="text-white bg-black px-5 py-1" disabled={true}>
-                Place Order
-              </button>
-            </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">Place Order</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Order Summary</DialogTitle>
+                  <DialogDescription>
+                    Make changes to your profile here. Click save when you're done.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <p>
+                    {cartItems.map((item) => (
+                      <div key={item.id}>
+                        <p className='ring-1'>
+                          {item.name}
+                        <span className='ml-2 bg-black rounded-[50%] w-1 h-1 object-cover text-white'>{item.quantity}</span>
+                        </p>
+                      </div>
+                    ))}
+                    <p>
+                      {totalQuantities}
+                    </p>
+                    <p>
+                      {totalPrice}
+                    </p>
+                  </p>
+                </div>
+                <DialogFooter>
+                  <Button disabled={true} className='mt-3'>Proceed to WhatsApp</Button>
+                  <Button disabled={true}  type="submit">Copy Order Message</Button>
+                </DialogFooter>
+                <div>
+                  <p className='text-gray-400 text-sm text-center'>Copy and send the order message to us on WhatsApp</p>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         )}
     </div>

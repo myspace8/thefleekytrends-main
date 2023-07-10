@@ -429,7 +429,7 @@ export default function Header() {
                 <hr />
                 <div className="flex flex-col md:flex-row ">
                   {searchResults.map(({ id, data }) => {
-                    const { name, image, originalPrice, reducedPrice } = data;
+                    const { name, image, normalPrice, discPrice } = data;
                     return (
                       <div
                         className="flex flex-row md:flex-col w-full md:w-fit items-center p-3 gap-3 hover:grayscale border-transparent border-b-2 hover:border-gray-100 cursor-pointer"
@@ -441,10 +441,10 @@ export default function Header() {
                             <h3 className="font-bold ">{name}</h3>
                             <div>
                               <span className="text-base">
-                                GH₵ {reducedPrice}
+                                GH₵ {discPrice}
                               </span>
                               <span className="ml-4 text-xs line-through font-extralight text-gray-600">
-                                GH₵{originalPrice}
+                                GH₵{normalPrice}
                               </span>
                             </div>
                           </div>

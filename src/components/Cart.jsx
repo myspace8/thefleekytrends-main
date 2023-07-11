@@ -1,8 +1,4 @@
-import React, { useRef, useState } from 'react';
 import Link from 'next/link';
-// import { AiOutlineMinus, AiOutlinePlus, AiOutlineLeft, AiOutlineShopping } from 'react-icons/ai';
-// import { TiDeleteOutline } from 'react-icons/ti';
-// import toast from 'react-hot-toast';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -14,15 +10,40 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 
 import { useStateContext } from '../context/StateContext';
-import { orderBy } from 'lodash';
+import { useEffect, useState } from 'react';
 
 const Cart = () => {
-  const [showModal, setShowModal] = useState(false)
-  const { totalPrice, totalQuantities, cartItems, setShowCart, toggleCartItemQuantity, onRemove } = useStateContext();
+  const { cartItems, qty, setShowCart, toggleCartItemQuantity, onRemove } = useStateContext();
+  const [totalPriceInCart, setTotalPriceInCart] = useState(0)
+
+  // Looping through the cartItems to get the total quantities
+  const getTotalQuantitiesInCart = () => {
+    let q = 0;
+    cartItems.map((item) => {
+      if (item.hasOwnProperty('quantity')) {
+        q += item.quantity
+      }
+    })
+
+    return q;
+  }
+  const totalQuantitiesInCart = getTotalQuantitiesInCart()
+
+  useEffect(() => {
+    const getTotalPriceInCart = () => {
+      let totalPrice = 0;
+      for (const item of cartItems) {
+        if (item.hasOwnProperty('discPrice')) {
+          totalPrice += item.discPrice * item.quantity;
+        }
+      }
+      setTotalPriceInCart(totalPrice);
+    };
+    getTotalPriceInCart();
+  }, [cartItems]);
+  
 
   return (
     <div>
@@ -30,13 +51,11 @@ const Cart = () => {
             type="button"
             className="cart-heading"
             onClick={() => setShowCart(false)}>
-              {/* <AiOutlineLeft /> */}
               <span className="heading">Your Cart</span>
-              <span className="cart-num-items">({totalQuantities} items)</span>
+              <span className="cart-num-items">({totalQuantitiesInCart} items)</span>
             </button>
         {cartItems.length < 1 && (
           <div className="empty-cart">
-            {/* <AiOutlineShopping size={150} /> */}
             <h3>Your shopping bag is empty</h3>
             <Link href="/">
               <button
@@ -63,12 +82,10 @@ const Cart = () => {
                 <p className="quantity-desc">
                     <span className="minus" onClick={() => toggleCartItemQuantity(item.id, 'dec') }>
                         Decrement
-                    {/* <AiOutlineMinus /> */}
                     </span>
-                    <span className="num" onClick="">{item.quantity}</span>
+                    <span className="num">{item.quantity}</span>
                     <span className="plus" onClick={() => toggleCartItemQuantity(item.id, 'inc') }>
                         Increment
-                        {/* <AiOutlinePlus /> */}
                     </span>
                 </p>
                 </div>
@@ -77,7 +94,6 @@ const Cart = () => {
                     className="remove-item underline"
                     onClick={() => onRemove(item)}
                 >
-                    {/* <TiDeleteOutline /> */}
                     Remove
                 </button>
                 </div>
@@ -89,7 +105,7 @@ const Cart = () => {
           <div className="cart-bottom">
             <div className="total">
               <h3>Subtotal:</h3>
-              <h3>GHC{totalPrice}</h3>
+              <h3>GHC{totalPriceInCart}</h3>
             </div>
             <Dialog>
               <DialogTrigger asChild>
@@ -103,7 +119,6 @@ const Cart = () => {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
-                  <p>
                     {cartItems.map((item) => (
                       <div key={item.id}>
                         <p className='ring-1'>
@@ -113,12 +128,11 @@ const Cart = () => {
                       </div>
                     ))}
                     <p>
-                      {totalQuantities}
+                      {totalQuantitiesInCart}
                     </p>
                     <p>
-                      {totalPrice}
+                      {totalPriceInCart}
                     </p>
-                  </p>
                 </div>
                 <DialogFooter>
                   <Button disabled={true} className='mt-3'>Proceed to WhatsApp</Button>

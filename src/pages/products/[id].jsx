@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function ProductDetails() {
   const [productList, setProductList] = useState([]);
-  const { decQty, incQty, qty, onAdd, setShowCart } = useStateContext();
+  const { qty, onAdd } = useStateContext();
 
     // -----------------------------------------
     const router = useRouter();
@@ -31,7 +31,6 @@ export default function ProductDetails() {
     };
     getProductList();
   }, [id]);
-  console.log(productList);
 
   return (
     <>

@@ -1,14 +1,36 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 
 const Context = createContext();
 
+// Retrieve cartItems from local storage on component mount
+const getStoredCartItems = () => {
+  try {
+    const storedCartItems = localStorage.getItem('cartItems');
+    return storedCartItems ? JSON.parse(storedCartItems) : [];
+  } catch (error) {
+    console.error('Error retrieving cartItems from localStorage:', error);
+    return [];
+  }
+};
+
 export const StateContext = ({ children }) => {
   const [showCart, setShowCart] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(getStoredCartItems);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalQuantities, setTotalQuantities] = useState(0);
   const [qty, setQty] = useState(1);
+  
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    } catch (error) {
+      console.error('Error saving cartItems to localStorage:', error);
+    }
+  }, [cartItems]);
+
+
 
   const onAdd = (product, quantity) => {
     const checkProductInCart = cartItems.find((item) => item.id === product.id);

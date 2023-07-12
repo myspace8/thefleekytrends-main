@@ -104,17 +104,17 @@ export default function Header() {
 
   return (
     <>
-      <header className="border-b">
+      <header className="bg-white sticky top-0 z-50">
         {/* DESKTOP DESKTOP DESKTOP DESKTOP */}
         {/* Banner */}
         <div className="flex justify-center bg-black py-2">
             <span className="text-sm text-white">Promo: Get 30% discount on first order</span>
         </div>
-        <div className="w-[90%] m-auto hidden md:block">
+        <div className="w-[95%] m-auto py-4 hidden md:block">
           <div className="flex items-center justify-between">
             <div>
               {/* Logo */}
-              <h1>Logo</h1>
+              <Link href={'/'}>Logo</Link>
             </div>
             <div>
               {/* Nav */}
@@ -233,10 +233,10 @@ export default function Header() {
           </div>
         </div>
         {/* MOBILE MOBILE MOBILE MOBILE */}
-        <div className="flex items-center justify-between mx-3 gap-2 md:hidden">
+        <div className="flex items-center py-1 justify-between w-[95%] m-auto gap-2 md:hidden ">
           <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost">
+                <Button variant='none' className='px-0'>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                   </svg>
@@ -398,7 +398,7 @@ export default function Header() {
        {/* SEARCH SEARCH SEARCH SEARCH */}
        {showSearch ? (
           <div
-            className="whats_overlay fixed w-screen bg-black z-10 bg-opacity-40 overflow-auto"
+            className="whats_overlay fixed w-screen bg-black bg-opacity-40 overflow-auto z-50"
             onClick={(e) => {
               if (
                 e.target.classList.contains("whats_overlay") || // using the `classList` property instead of `className`.

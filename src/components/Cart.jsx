@@ -15,7 +15,7 @@ import { useStateContext } from '../context/StateContext';
 import { useEffect, useState } from 'react';
 
 const Cart = () => {
-  const { cartItems, qty, setShowCart, toggleCartItemQuantity, onRemove } = useStateContext();
+  const { cartItems, setCartItems, setShowCart, toggleCartItemQuantity, onRemove } = useStateContext();
   const [totalPriceInCart, setTotalPriceInCart] = useState(0)
 
   // Looping through the cartItems to get the total quantities
@@ -43,6 +43,34 @@ const Cart = () => {
     };
     getTotalPriceInCart();
   }, [cartItems]);
+
+  const handleColorChange = (itemId, newColor) => {
+    const updatedCartItems = cartItems.map((item) => {
+      if (item.id === itemId) {
+        return {
+          ...item,
+          color: newColor,
+        };
+      }
+      return item;
+    });
+
+    setCartItems(updatedCartItems);
+  };
+
+  const handleSizeChange = (itemId, newSize) => {
+    const updatedCartItems = cartItems.map((item) => {
+      if (item.id === itemId) {
+        return {
+          ...item,
+          size: newSize,
+        };
+      }
+      return item;
+    });
+
+    setCartItems(updatedCartItems);
+  };
   
 
   return (
@@ -70,7 +98,7 @@ const Cart = () => {
         )}
         <div className="product-container">
         {cartItems.length >= 1 && cartItems.map((item) => (
-            <div className="flex" key={item.id}>
+          <div className="flex" key={item.id}>
             <img src={item.image} className="w-[150px] h-[150px] " />
             <div className="item-desc">
                 <div className="flex top">
@@ -89,16 +117,36 @@ const Cart = () => {
                     </span>
                 </p>
                 </div>
-                <button
-                    type="button"
-                    className="remove-item underline"
-                    onClick={() => onRemove(item)}
-                >
-                    Remove
-                </button>
+                  <button
+                      type="button"
+                      className="remove-item underline"
+                      onClick={() => onRemove(item)}
+                  >
+                      Remove
+                  </button>
                 </div>
+                <div>
+                  <label htmlFor={`color-${item.id}`}>Color:</label>
+                  <input
+                    type="text"
+                    id={`color-${item.id}`}
+                    value={item.color}
+                    onChange={(e) => handleColorChange(item.id, e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label htmlFor={`size-${item.id}`}>Size:</label>
+                  <input
+                    type="text"
+                    id={`size-${item.id}`}
+                    value={item.size}
+                    onChange={(e) => handleSizeChange(item.id, e.target.value)}
+                  />
+                </div>
+                  <p>Color: {item.color}</p>
+                  <p>Size: {item.size}</p>
             </div>
-            </div>
+          </div>
         ))}
         </div>
         {cartItems.length >= 1 && (
@@ -122,16 +170,20 @@ const Cart = () => {
                     {cartItems.map((item) => (
                       <div key={item.id}>
                         <p className='ring-1'>
-                          {item.name}
-                        <span className='ml-2 bg-black rounded-[50%] w-1 h-1 object-cover text-white'>{item.quantity}</span>
+                          {item.name} <br />
+                          {item.color} <br />
+                          {item.size} <br />
+                        <span className='ml-2 bg-black rounded-[50%] w-1 h-1 object-cover text-white'>
+                          {item.quantity}
+                        </span>
                         </p>
                       </div>
                     ))}
                     <p>
-                      {totalQuantitiesInCart}
+                      Total quantity: {totalQuantitiesInCart}
                     </p>
                     <p>
-                      {totalPriceInCart}
+                      Total Price: GHC {totalPriceInCart}
                     </p>
                 </div>
                 <DialogFooter>

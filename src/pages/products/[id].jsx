@@ -5,7 +5,6 @@ import { Disclosure } from '@headlessui/react'
 import { ChevronUpIcon } from '@heroicons/react/20/solid'
 import { getProduct } from "@/firebase/firestore/getData";
 import { dummyTrending } from "@/dummData";
-import ColorPicker from "./palletes";
 import { useStateContext } from '@/context/StateContext';
 
 
@@ -13,6 +12,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function ProductDetails() {
   const [productList, setProductList] = useState([]);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
+
+
   const { qty, onAdd } = useStateContext();
 
     // -----------------------------------------
@@ -31,6 +34,9 @@ export default function ProductDetails() {
     };
     getProductList();
   }, [id]);
+
+  const hasColors = Array.isArray(productList.color);
+  const hasSizes = Array.isArray(productList.size);
 
   return (
     <>
@@ -58,26 +64,51 @@ export default function ProductDetails() {
                 </div>
               </div>
               <div>
-              <div className="flex items-center">
-                <label className="block font-medium" htmlFor="selectField">
-                  Size
-                </label>
-                <select
-                  id="selectField"
-                  className="p-2 bg-white focus:outline-none "
-                >
-                  <option value="option1">40</option>
-                  <option value="option2">36</option>
-                  <option value="option3">38</option>
-                </select>
-              </div>
+              {hasSizes && (
+                <div className="flex items-center">
+                  <label className="block font-medium" htmlFor="selectField">
+                    Size
+                  </label>
+                  <select
+                    id="selectField"
+                    className="p-2 bg-white focus:outline-none"
+                    value={selectedSize}
+                    onChange={(e) => setSelectedSize(e.target.value)}
+                  >
+                    <option value="">Select Size</option>
+                    {productList.size.map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
                 <div className="mt-3 mb-3">
-                  <ColorPicker />
+                  {/* Color picker goes here*/}
+                  {hasColors && (
+                    <div className="mt-3 mb-3">
+                      <p>Select Color:</p>
+                      <div className="flex gap-2">
+                        {productList.color.map((color) => (
+                          <button
+                            key={color}
+                            className={`w-8 h-8 rounded-full ${
+                              selectedColor === color ? "border-2 border-gray-500" : ""
+                            }`}
+                            style={{ backgroundColor: color }}
+                            onClick={() => setSelectedColor(color)}
+                          ></button>
+                        ))}
+                      </div>
+                      <p>Selected Color: {selectedColor}</p>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="mt-6">
                 <button
-                onClick={() => onAdd(productList, qty)} 
+                onClick={() => onAdd(productList, qty, selectedColor, selectedSize)} 
                 className="px-4 w-full py-2 bg-gray-900 text-white rounded-sm shadow-2xl hover: focus:outline-none focus:bg-gray-900">
                   Add to Bag
                 </button>              

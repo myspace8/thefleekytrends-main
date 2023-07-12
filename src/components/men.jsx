@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import db from '@/firebase/config';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 import { getProducts } from '@/firebase/firestore/getData';
@@ -60,7 +60,7 @@ export default function Women() {
         <section className="m-6 rounded-sm">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {productList.map((product) => (
-                <Link href={`/products/${product.id}`} key={product.name} id={`product-link-${product.id}`} 
+                <Link href={`/products/${product.id}`} key={product.id} id={`product-link-${product.id}`} 
                 className="mb-8 flex flex-col items-center">
                     <div className='mb-2'>
                     <img

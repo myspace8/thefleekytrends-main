@@ -371,7 +371,7 @@ export default function Header() {
             </Sheet>
             <div>
               <Link href={'/'}>
-              Logo
+              <span className="text-lg font-bold uppercase">Company</span>
               </Link>
             </div>
             {/* SEARCH SEARCH SEARCH */}

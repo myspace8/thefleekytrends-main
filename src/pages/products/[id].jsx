@@ -6,6 +6,7 @@ import { ChevronUpIcon } from '@heroicons/react/20/solid'
 import { getProduct } from "@/firebase/firestore/getData";
 import { dummyTrending } from "@/dummData";
 import { useStateContext } from '@/context/StateContext';
+import Layout from "@/components/layout";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -40,16 +41,17 @@ export default function ProductDetails() {
 
   return (
     <>
+    <Layout>
       <div className={`md:w-[900px] md:m-[auto] ${inter.className}`}>
-        <div className="flex flex-col md:gap-11 md:flex-row py-4 px-4 md:py-6 bg-white my-6 rounded-sm shadow-md lg:py-8">
-            <div className="flex gap-4">
-              <div className="md:w-[98%] relative mb-4 md:mb-0">
+        <div className="flex flex-col md:gap-11 md:flex-row py-4 md:py-6 bg-white my-6 rounded-sm shadow-md lg:py-8">
+            <div>
+              <div className="md:w-[98%] relative mb-4 md:mb-0 border">
                 <img
                   width={500}
                   height={500}
                   src={productList.image}
                   alt={productList.name}
-                  className="w-full h-full object-contain"
+                  className="h-[608px] md:h-[550px] object-contain w-full"
                 />
                 <p className="absolute top-0 text-sm text-red-400">Product ID: {productList.id}</p>
               </div>
@@ -148,6 +150,8 @@ export default function ProductDetails() {
             </div>
         </div>
       </div>
+
+    </Layout>
     </>
   );
 }

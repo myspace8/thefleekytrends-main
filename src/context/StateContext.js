@@ -65,21 +65,29 @@ export const StateContext = ({ children }) => {
     if (!foundProduct) return; // Return early if the product is not found
 
     setCartItems(newCartItems);
-  };
+  };  
 
   const toggleCartItemQuantity = (id, value) => {
-    const foundProduct = cartItems.find((item) => item.id === id);
-    const index = cartItems.findIndex((product) => product.id === id);
-    const newCartItems = cartItems.filter((item) => item.id !== id);
-
-    if (value === 'inc') {
-      setCartItems([...newCartItems, { ...foundProduct, quantity: foundProduct.quantity + 1 }]);
-    } else if (value === 'dec') {
-      if (foundProduct.quantity > 1) {
-        setCartItems([...newCartItems, { ...foundProduct, quantity: foundProduct.quantity - 1 }]);
+    const updatedCartItems = cartItems.map((item) => {
+      if (item.id === id) {
+        if (value === 'inc') {
+          return {
+            ...item,
+            quantity: item.quantity + 1,
+          };
+        } else if (value === 'dec' && item.quantity > 1) {
+          return {
+            ...item,
+            quantity: item.quantity - 1,
+          };
+        }
       }
-    }
+      return item;
+    });
+  
+    setCartItems(updatedCartItems);
   };
+  
 
   const incQty = () => {
     setQty((prevQty) => prevQty + 1);

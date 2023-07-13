@@ -9,10 +9,7 @@ export default function Home() {
         <div className="">
           <SexLink />
         </div>
-        <div className="flex justify-center">
-          <div></div>
-        </div>
-        <div className="mt-2 lg:m-8 bg-white rounded-sm">
+        <div className="mt-2 lg:m-8">
           <TrendingProducts />
         </div>
     </Layout>

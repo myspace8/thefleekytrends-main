@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { getProduct } from '@/firebase/firestore/getData';
 
 
 export const  filterByGender = (products, gender) =>{
@@ -9,13 +11,37 @@ export const  filterByGender = (products, gender) =>{
     return items.filter((item) => item.data.name.toLowerCase().includes(subtext.toLowerCase()));
   }
   
-/*  // Usage example
-  const items: Item[] = [
-    // Array items here
-  ];
   
-  const filteredItems = filterItemsBySubtext(items, "Leather");
+  const useProductList = (cartItems) => {
+    const [productList, setProductList] = useState([]);
+    const [loading, setLoading] = useState(true);
   
+    useEffect(() => {
+      let isMounted = true;
   
+      const fetchProductList = async () => {
+        try {
+          const productPromises = cartItems.map((item) => getProduct(item.id));
+          const productList = await Promise.all(productPromises);
+          if (isMounted) {
+            setProductList(productList);
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
   
-  */
+      if (cartItems.length > 0) {
+        fetchProductList();
+      }
+  
+      return () => {
+        isMounted = false;
+      };
+    }, [cartItems]);
+  
+    return { productList, loading };
+};
+  
+export default useProductList;
